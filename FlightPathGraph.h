@@ -4,6 +4,7 @@
 #include <string>
 #include <list>
 #include <map>
+#include <vector>
 
 using namespace std;
 
@@ -18,9 +19,9 @@ public:
 
 	void addEdge(string node, string connection);
 
-	void printMap();
+	void printGraph();
 	
-	map<string, list<string> > edges;
+	map<string, vector<string> > edges;
 
 };
 

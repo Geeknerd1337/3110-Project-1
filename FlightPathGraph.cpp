@@ -36,11 +36,16 @@ void FlightPathGraph::addEdge(string node, string connection) {
 
 
 //Prints out a city and all its connections
-void FlightPathGraph::printMap(){
+void FlightPathGraph::printGraph(){
+	//Iterate over our dictionary
 	for (auto iter = edges.begin(); iter !=  edges.end(); ++iter){
         cout << "[" << iter->first << "]" << endl;
-		for (auto const& i : iter->second) {
-    		cout << "\t" << i << endl;
+		//Get a reference to the vector
+		vector<string> ls = iter->second;
+
+		//Print out the vector
+		for(int i = 0; i < ls.size(); i++){
+			cout << "\t" << ls[i] << endl;
 		}
     }
 }

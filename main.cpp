@@ -9,7 +9,7 @@ int main() {
     graph.readFile();
 
     //Print the map for testing purposes
-    graph.printMap();    
+    graph.printGraph();    
 
     return 0;
 }
