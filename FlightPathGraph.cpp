@@ -34,3 +34,13 @@ void FlightPathGraph::addEdge(string node, string connection) {
 	edges[node].push_back(connection);
 }
 
+
+//Prints out a city and all its connections
+void FlightPathGraph::printMap(){
+	for (auto iter = edges.begin(); iter !=  edges.end(); ++iter){
+        cout << "[" << iter->first << "]" << endl;
+		for (auto const& i : iter->second) {
+    		cout << "\t" << i << endl;
+		}
+    }
+}
