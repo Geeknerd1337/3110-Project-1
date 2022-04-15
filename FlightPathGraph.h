@@ -5,6 +5,7 @@
 #include <list>
 #include <map>
 #include <vector>
+#include <algorithm>
 
 using namespace std;
 
@@ -20,6 +21,10 @@ public:
 	void addEdge(string node, string connection);
 
 	void printGraph();
+
+	bool breadthFirstSearch(string start, string end);
+
+	map<string, string> path;
 	
 	map<string, vector<string> > edges;
 

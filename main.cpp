@@ -8,8 +8,11 @@ int main() {
     //Read in the local file
     graph.readFile();
 
-    //Print the map for testing purposes
-    graph.printGraph();    
+    if(graph.breadthFirstSearch("Zurich, Switzerland","Lagos, Nigeria")){
+        cout << "Found Path Between Two Cities" << endl;
+    }else{
+        cout << "*sad program noise*" << endl;
+    }
 
     return 0;
 }
