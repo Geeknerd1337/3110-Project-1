@@ -8,12 +8,11 @@ int main() {
     //Read in the local file
     graph.readFile();
 
-    if(graph.breadthFirstSearch("Zurich, Switzerland","Lagos, Nigeria")){
-        cout << "Found Path Between Two Cities" << endl;
-        graph.printPath();
-    }else{
-        cout << "*sad program noise*" << endl;
-    }
+    //graph.routeSearch2("Winston-Salem, United States","Tel Aviv, Israel","Warsaw, Poland","Brisbane, Australia");
+    graph.breadthFirstSearch("Warsaw, Poland", "Tel Aviv, Israel");
+    //graph.processPath("Tel Aviv, Israel", "Brisbane, Australia");
+    //graph.printPath();
+    graph.printParents();
 
     return 0;
 }

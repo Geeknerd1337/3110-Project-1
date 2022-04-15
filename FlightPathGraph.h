@@ -33,6 +33,10 @@ public:
 	void processPath(string start, string end);
 
 	void routeSearch1(string start, string end, int num);
+
+	void routeSearch2(string start, string visit1, string visit2, string end);
+
+	void printParents();
 	
 	map<string, vector<string> > edges;
 
