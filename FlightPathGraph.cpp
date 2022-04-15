@@ -93,8 +93,8 @@ void FlightPathGraph::processPath(string start, string end){
 	path.push_back(end);	
 
 	while(child.compare(start) != 0){
-		path.push_back(parents[s]);
-		child = parents[s];	
+		path.push_back(parents[child]);
+		child = parents[child];	
 	}
 
 	reverse(path.begin(),path.end());
