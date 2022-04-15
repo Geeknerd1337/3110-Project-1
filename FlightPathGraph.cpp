@@ -88,13 +88,13 @@ void FlightPathGraph::printParents(){
 //This processes a path by iterating upwards through the parents of nodes
 //This is kind of messy, but that's okay :)
 void FlightPathGraph::processPath(string start, string end){
-	string s = end;
+	string child = end;
 
 	path.push_back(end);	
 
-	while(s.compare(start) != 0){
+	while(child.compare(start) != 0){
 		path.push_back(parents[s]);
-		s = parents[s];	
+		child = parents[s];	
 	}
 
 	reverse(path.begin(),path.end());
