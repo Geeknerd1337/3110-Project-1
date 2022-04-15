@@ -5,13 +5,15 @@
 //https://stackoverflow.com/questions/24139428/check-if-element-is-in-the-list-contains
 namespace std
 {
-    template<class _container,
-        class _Ty> inline
-        bool contains(_container _C, const _Ty& _Val)
-        {return std::find(_C.begin(), _C.end(), _Val) != _C.end(); }
+	template<class _container,
+		class _Ty> inline
+		bool contains(_container _C, const _Ty& _Val)
+	{
+		return std::find(_C.begin(), _C.end(), _Val) != _C.end();
+	}
 };
 
-void FlightPathGraph::readFile(){
+void FlightPathGraph::readFile() {
 	flightPathFile.open("flight.txt");
 	string node, connection;
 
@@ -47,79 +49,137 @@ void FlightPathGraph::addEdge(string node, string connection) {
 
 
 //Prints out a city and all its connections
-void FlightPathGraph::printGraph(){
+void FlightPathGraph::printGraph() {
 	//Iterate over our dictionary
-	for (auto iter = edges.begin(); iter !=  edges.end(); ++iter){
-        cout << "[" << iter->first << "]" << endl;
+	for (auto iter = edges.begin(); iter != edges.end(); ++iter) {
+		cout << "[" << iter->first << "]" << endl;
 		//Get a reference to the vector
 		vector<string> ls = iter->second;
 
 		//Print out the vector
-		for(int i = 0; i < ls.size(); i++){
+		for (int i = 0; i < ls.size(); i++) {
 			cout << "\t" << ls[i] << endl;
 		}
-    }
+	}
 }
 
 //Traces up through a path to print out the nodes it visisted
-void FlightPathGraph::printPath(){
+void FlightPathGraph::printPath() {
 
 	//Iterate over the path and print it
-	for(int i = 0; i < path.size(); i++){
+	for (int i = 0; i < path.size(); i++) {
 		cout << path[i];
-		if(i + 1 < path.size()){
+		if (i + 1 < path.size()) {
 			cout << " -> ";
 		}
 	}
 	cout << endl;
 }
 
-void FlightPathGraph::printParents(){
+void FlightPathGraph::printParents() {
 
 	//Iterate over the parents and print them
-	for (auto iter = parents.begin(); iter !=  parents.end(); ++iter){
-        cout << "[" << iter->first << "]" << "->[" << iter->second << "]" << endl;
+	/*for (auto iter = parents.begin(); iter != parents.end(); ++iter) {
+		cout << "[" << iter->first << "]" << "->[" << iter->second << "]" << endl;
 		//Get a reference to the vector
-		
-    }
-	cout << endl;
+
+	}
+	cout << endl;*/
+
+	//string, vector version
+	for (auto iter = parents.begin(); iter != parents.end(); ++iter) {
+		cout << "[" << iter->first << "]" << endl;
+		//Get a reference to the vector
+		vector<string> ls = iter->second;
+
+		//Print out the vector
+		for (int i = 0; i < ls.size(); i++) {
+			cout << "\t" << ls[i] << endl;
+		}
+	}
+
+	
 }
 
 //This processes a path by iterating upwards through the parents of nodes
 //This is kind of messy, but that's okay :)
-void FlightPathGraph::processPath(string start, string end){
+void FlightPathGraph::processPath(string start, string end, bool addEndToPath) {
 	string child = end;
+	path.clear();
+	//keep track of which cities have been visitied in this function
+	visitedInProcess.clear();
+	if (addEndToPath) {
+		path.push_back(end);
+	}
+	int i = 0;
 
-	path.push_back(end);	
+	//this was for a more complicated idea of storing an index for each child
+	//vector<int> indexes(parents.size(), 0);
 
-	while(child.compare(start) != 0){
-		path.push_back(parents[child]);
-		child = parents[child];	
+	while (child.compare(start) != 0) {
+		//push city to visited vector
+		visitedInProcess.push_back(child);
+
+		//if i isn't out of range, use it as an index
+		if (i < parents[child].size()) {
+			path.push_back(parents[child][i]);
+			cout << parents[child][i] << endl;
+			child = parents[child][i];
+		}
+		//if it is, just use size as an index
+		else {
+			path.push_back(parents[child][parents[child].size()]);
+			cout << parents[child][parents[child].size()-1] << endl;
+			child = parents[child][parents[child].size()-1];
+		}
+
+		//if we encounter a city we've been to, gtfo and start again with a higher index
+		if(contains(visitedInProcess, child))
+		{
+			i++;
+			child = end;
+			path.clear();
+			if (addEndToPath) {
+				path.push_back(end);
+			}
+		}
+
 	}
 
-	reverse(path.begin(),path.end());
+	reverse(path.begin(), path.end());
 }
 
+/*void FlightPathGraph::processPath(string start, string end) {
+	string child = end;
+	
+
+		//reverse(path.begin(), path.end());
+	}*/
+
+
+
 //Question 1 from the project
-void FlightPathGraph::routeSearch1(string start, string end, int num){
+void FlightPathGraph::routeSearch1(string start, string end, int num) {
 	//Use BFS to find the shortest path between the start and the end
-	if(breadthFirstSearch(start, end) == true){
+	if (breadthFirstSearch(start, end) == true) {
 		//Process the path to get a vector
-		processPath(start, end);
+		processPath(start, end, true);
 		//Check the length of that path to validate that it is of the length desired
-		if(path.size() > num){
+		if (path.size() > num) {
 			printf("A path of the size you requested does not exist.\n");
-		}else{
+		}
+		else {
 			printf("We have found a path of the desired length or shorter:\n");
 			printPath();
 			cout << endl;
 		}
-	}else{
+	}
+	else {
 		printf("A path does not exist between the two cities you selected");
 	}
 }
 
-void FlightPathGraph::routeSearch2(string start, string visit1, string visit2, string end){
+void FlightPathGraph::routeSearch2(string start, string visit1, string visit2, string end) {
 	int distance1 = 0;
 	int distance2 = 0;
 	vector<string> path1;
@@ -127,66 +187,76 @@ void FlightPathGraph::routeSearch2(string start, string visit1, string visit2, s
 
 	//Our first case, which performs several breadth first searches over the given subgraph:
 	//A -> B -> C -> D
-	if(breadthFirstSearch(start,visit1)){
-		processPath(start,visit1);
+	if (breadthFirstSearch(start, visit1)) {
+		processPath(start, visit1, false);
 		distance1 += path.size();
-		path1.insert(path1.end(),path.begin(),path.end());
+		path1.insert(path1.end(), path.begin(), path.end());
 
-		if(breadthFirstSearch(visit1,visit2)){
-			processPath(visit1,visit2);
+		if (breadthFirstSearch(visit1, visit2)) {
+			processPath(visit1, visit2, false);
 			distance1 += path.size();
-			path1.insert(path1.end(),path.begin(),path.end());
+			path1.insert(path1.end(), path.begin(), path.end());
 
-			if(breadthFirstSearch(visit2,end)){
-				processPath(visit2,end);
+			if (breadthFirstSearch(visit2, end)) {
+				processPath(visit2, end, true);
 				distance1 += path.size();
-				path1.insert(path1.end(),path.begin(),path.end());
+				path1.insert(path1.end(), path.begin(), path.end());
 
-			}else{
+			}
+			else {
 				distance1 = -1;
 			}
-		}else{
+		}
+		else {
 			distance1 = -1;
 		}
-	}else{
+	}
+	else {
 		distance1 = -1;
 	}
 
 	//Our first case, which performs several breadth first searches over the given subgraph:
 	//A -> C -> B -> D
-	if(breadthFirstSearch(start,visit2)){
-		processPath(start,visit2);
+	if (breadthFirstSearch(start, visit2)) {
+		processPath(start, visit2, false);
 		distance2 += path.size();
-		path2.insert(path2.end(),path.begin(),path.end());
-		
-		if(breadthFirstSearch(visit2,visit1)){
-			processPath(visit2,visit1);
+		path2.insert(path2.end(), path.begin(), path.end());
+
+		if (breadthFirstSearch(visit2, visit1)) {
+			processPath(visit2, visit1, false);
 			distance2 += path.size();
-			path2.insert(path2.end(),path.begin(),path.end());
-			cout <<"FUCK!";
-			if(breadthFirstSearch(visit1,end)){
-				processPath(visit1,end);
+			path2.insert(path2.end(), path.begin(), path.end());
+			if (breadthFirstSearch(visit1, end)) {
+				processPath(visit1, end, true);
 				distance2 += path.size();
-				path2.insert(path2.end(),path.begin(),path.end());
-			}else{
+				path2.insert(path2.end(), path.begin(), path.end());
+			}
+			else {
 				distance2 = -1;
 			}
-		}else{
+		}
+		else {
 			distance2 = -1;
 		}
-	}else{
+	}
+	else {
 		distance2 = -1;
 	}
 
-	cout << "HMM"<< endl;
 
-	if(distance1 > distance2){
+	cout << "dist1: " << distance1 << "dist2: " << distance2 << endl;
+
+	if (distance1 > distance2) {
 		path = path2;
 		printPath();
-	}else if(distance2 > distance1){
+		cout << "path 2" << endl;
+	}
+	else if (distance2 > distance1) {
 		path = path1;
 		printPath();
-	}else if(distance1 == distance2 && distance1 != -1 && distance2 != -1){
+		cout << "path 1";
+	}
+	else if (distance1 == distance2 && distance1 != -1 && distance2 != -1) {
 		printf("The distances between the following paths are equal:\n");
 		path = path1;
 		printPath();
@@ -194,14 +264,14 @@ void FlightPathGraph::routeSearch2(string start, string visit1, string visit2, s
 		printPath();
 	}
 
-	if(distance1 == -1 && distance2 == -1){
+	if (distance1 == -1 && distance2 == -1) {
 		printf("There is no path which takes you to the two desired cities");
 	}
-	
+
 }
 
 //Implementation of a breadth-first search algorithm
-bool FlightPathGraph::breadthFirstSearch(string start, string end){
+bool FlightPathGraph::breadthFirstSearch(string start, string end) {
 	//Clear our path
 	parents.clear();
 
@@ -217,28 +287,28 @@ bool FlightPathGraph::breadthFirstSearch(string start, string end){
 	openSet.push_back(start);
 
 	//Run this while our open set is not empty
-	while(!openSet.empty()){
+	while (!openSet.empty()) {
 		//Get the node we're gonna scan
 		string node = openSet.front();
 		//Remove that node from the open set
 		openSet.pop_front();
 		//Now we're gonna iterate over our 'connections' in that portion of the graph
-		for(int i = 0; i < edges[node].size(); i++){
+		for (int i = 0; i < edges[node].size(); i++) {
 			//In theory this gets the connection at the given node
 			string child = edges[node][i];
 			//We check to see if this is not in our closed set, and if not, we add it to our open set to be scanned
-			if(!contains(openSet,child)){
+			if (!contains(openSet, child)) {
 				//Add it to our open set
 				openSet.push_back(child);
 
 				//What this is basically doing is giving an entry in the map where you will give a given destination node and be able to trace back to its parent
-				parents[child] = node;
-				// if(!contains(parents[child],node)){
-				// 	parents[child].push_back(node);
-				// }
+				//parents[child] = node;
+				 if (!contains(parents[child], node)) {
+				 	parents[child].push_back(node);
+				 }
 
 				//Now we check to see if we've reached our destination, and if so, return true
-				if(child.compare(end) == 0){
+				if (child.compare(end) == 0) {
 					return true;
 				}
 			}
@@ -247,5 +317,3 @@ bool FlightPathGraph::breadthFirstSearch(string start, string end){
 
 	return false;
 }
-
-
