@@ -31,6 +31,8 @@ public:
 	vector<string> path;
 
 	void processPath(string start, string end);
+
+	void routeSearch1(string start, string end, int num);
 	
 	map<string, vector<string> > edges;
 

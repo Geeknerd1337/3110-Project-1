@@ -89,6 +89,25 @@ void FlightPathGraph::processPath(string start, string end){
 	reverse(path.begin(),path.end());
 }
 
+//Question 1 from the project
+void FlightPathGraph::routeSearch1(string start, string end, int num){
+	//Use BFS to find the shortest path between the start and the end
+	if(breadthFirstSearch(start, end) == true){
+		//Process the path to get a vector
+		processPath(start, end);
+		//Check the length of that path to validate that it is of the length desired
+		if(path.size() > num){
+			printf("A path of the size you requested does not exist.\n");
+		}else{
+			printf("We have found a path of the desired length or shorter:\n");
+			printPath();
+			cout << endl;
+		}
+	}else{
+		printf("A path does not exist between the two cities you selected");
+	}
+}
+
 //Implementation of a breadth-first search algorithm
 bool FlightPathGraph::breadthFirstSearch(string start, string end){
 	//Clear our path
@@ -125,7 +144,6 @@ bool FlightPathGraph::breadthFirstSearch(string start, string end){
 
 				//Now we check to see if we've reached our destination, and if so, return true
 				if(s.compare(end) == 0){
-					processPath(start, end);
 					return true;
 				}
 			}
