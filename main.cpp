@@ -10,6 +10,7 @@ int main() {
 
     if(graph.breadthFirstSearch("Zurich, Switzerland","Lagos, Nigeria")){
         cout << "Found Path Between Two Cities" << endl;
+        graph.printPath();
     }else{
         cout << "*sad program noise*" << endl;
     }

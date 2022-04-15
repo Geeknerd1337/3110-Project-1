@@ -61,8 +61,38 @@ void FlightPathGraph::printGraph(){
     }
 }
 
+//Traces up through a path to print out the nodes it visisted
+void FlightPathGraph::printPath(){
+
+	//Iterate over the path and print it
+	for(int i = 0; i < path.size(); i++){
+		cout << path[i];
+		if(i + 1 < path.size()){
+			cout << " -> ";
+		}
+	}
+	cout << endl;
+}
+
+//This processes a path by iterating upwards through the parents of nodes
+//This is kind of messy, but that's okay :)
+void FlightPathGraph::processPath(string start, string end){
+	string s = end;
+
+	path.push_back(end);	
+
+	while(s.compare(start) != 0){
+		path.push_back(parents[s]);
+		s = parents[s];	
+	}
+
+	reverse(path.begin(),path.end());
+}
+
 //Implementation of a breadth-first search algorithm
 bool FlightPathGraph::breadthFirstSearch(string start, string end){
+	//Clear our path
+	parents.clear();
 
 	//A list of strings of nodes that need to be scanned as per the BFS algorithm
 	list<string> openSet;
@@ -91,10 +121,11 @@ bool FlightPathGraph::breadthFirstSearch(string start, string end){
 				openSet.push_back(s);
 
 				//What this is basically doing is giving an entry in the map where you will give a given destination node and be able to trace back to its parent
-				path[s] = node;
+				parents[s] = node;
 
 				//Now we check to see if we've reached our destination, and if so, return true
 				if(s.compare(end) == 0){
+					processPath(start, end);
 					return true;
 				}
 			}

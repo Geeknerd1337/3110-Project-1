@@ -24,7 +24,13 @@ public:
 
 	bool breadthFirstSearch(string start, string end);
 
-	map<string, string> path;
+	void printPath();
+
+	map<string, string> parents;
+
+	vector<string> path;
+
+	void processPath(string start, string end);
 	
 	map<string, vector<string> > edges;
 
