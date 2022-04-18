@@ -123,13 +123,13 @@ void FlightPathGraph::processPath(string start, string end, bool addEndToPath) {
 		//if i isn't out of range, use it as an index
 		if (i < parents[child].size()) {
 			path.push_back(parents[child][i]);
-			cout << parents[child][i] << endl;
+			//cout << parents[child][i] << endl;
 			child = parents[child][i];
 		}
 		//if it is, just use size as an index
 		else {
 			path.push_back(parents[child][parents[child].size()]);
-			cout << parents[child][parents[child].size()-1] << endl;
+			//cout << parents[child][parents[child].size()-1] << endl;
 			child = parents[child][parents[child].size()-1];
 		}
 
@@ -148,13 +148,6 @@ void FlightPathGraph::processPath(string start, string end, bool addEndToPath) {
 
 	reverse(path.begin(), path.end());
 }
-
-/*void FlightPathGraph::processPath(string start, string end) {
-	string child = end;
-	
-
-		//reverse(path.begin(), path.end());
-	}*/
 
 
 
@@ -176,6 +169,75 @@ void FlightPathGraph::routeSearch1(string start, string end, int num) {
 	}
 	else {
 		printf("A path does not exist between the two cities you selected");
+	}
+}
+
+void FlightPathGraph::routeSearch4(string city1, string city2,string city3){
+	//Set a maximum distance
+	int dist = INT_MAX;
+	string finalDest = "";
+	path.clear();
+
+	//This is *incredibly* inefficient but we're gonna iterate over every node in the graph
+	for (auto iter = edges.begin(); iter != edges.end(); ++iter) {
+		//A current distance variable 
+		int curDistance = 0;
+
+		string city = iter->first;
+		//If the current city we're looking at
+		if(city.compare(city1) == 0 || city.compare(city2) == 0 || city.compare(city3) == 0){
+			continue;
+		}
+
+		//See if we get a path to city 1
+		if(breadthFirstSearch(city,city1)){
+			processPath(city,city1, true);
+			curDistance += path.size();
+		}else{
+			//if we don't find a path, just stop looking
+			continue;
+		}
+
+		//See if we can get a path to city 2
+		if(breadthFirstSearch(city, city2)){
+			processPath(city,city2, true);
+			curDistance += path.size();
+		}else{
+			continue;
+		}
+
+		//See if we can get a path to city 3
+		if(breadthFirstSearch(city, city3)){
+			processPath(city,city3, true);
+			curDistance += path.size();
+		}else{
+			continue;
+		}
+
+		//If we made it this far, there is a path to all 3 cities, so now we check to see if this distance is the smallest
+		if(curDistance < dist){
+			dist = curDistance;
+			finalDest = city;
+		}
+	}
+
+	//Finally, if our finalDest isn't equal to "", then we can print the paths, otherwise, there is no path.
+	if(finalDest.compare("") != 0){
+		printf("Here are your paths for a minimum distance between these cities:\n");
+		breadthFirstSearch(city1, finalDest);
+		processPath(city1,finalDest, true);
+		printPath();
+
+		breadthFirstSearch(city2, finalDest);
+		processPath(city2,finalDest, true);
+		printPath();
+
+		breadthFirstSearch(city3, finalDest);
+		processPath(city3,finalDest, true);
+		printPath();
+
+	}else{
+		printf("There exists no path between these 3 cities.\n");
 	}
 }
 

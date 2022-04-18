@@ -6,6 +6,7 @@
 #include <map>
 #include <vector>
 #include <algorithm>
+#include <bits/stdc++.h>
 
 using namespace std;
 
@@ -38,6 +39,8 @@ public:
 	void routeSearch1(string start, string end, int num);
 
 	void routeSearch2(string start, string visit1, string visit2, string end);
+
+	void routeSearch4(string city1, string city2,string city3);
 
 	void printParents();
 

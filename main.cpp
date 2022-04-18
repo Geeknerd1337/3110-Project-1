@@ -7,8 +7,8 @@ int main() {
     FlightPathGraph graph;
     //Read in the local file
     graph.readFile();
-
-    graph.routeSearch2("Winston-Salem, United States","Tel Aviv, Israel","Warsaw, Poland","Brisbane, Australia");
+    
+    graph.routeSearch4("Bogot, Colombia","Tel Aviv, Israel","Lusaka, Zambia");
    
 
     return 0;
