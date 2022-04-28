@@ -8,8 +8,9 @@ int main() {
     //Read in the local file
     graph.readFile();
     
-    graph.routeSearch4("Bogot, Colombia","Tel Aviv, Israel","Lusaka, Zambia");
-   
+    graph.routeSearch3("Bogot, Colombia");
+    
+
 
     return 0;
 }

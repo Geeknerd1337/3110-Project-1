@@ -172,6 +172,38 @@ void FlightPathGraph::routeSearch1(string start, string end, int num) {
 	}
 }
 
+
+void FlightPathGraph::routeSearch3(string city){
+
+	vector<string> citiesToVisit = edges[city];
+	int maxDistance = INT_MAX;
+	int selectedIndex = -1;
+
+	for(int i = 0; i < citiesToVisit.size(); i++){
+		string cityConnection = citiesToVisit[i];
+		if(breadthFirstSearch(cityConnection, city)){
+			processPath(cityConnection, city, true);
+			
+			if(path.size() < maxDistance){
+				maxDistance = path.size();
+				selectedIndex = i;
+			}
+		}	
+	}
+
+	//Then literally just run this again one last time to get the correct original path
+	//TODO: Probably just faster to cache the best path as a vector instead of doing another search but 
+	//this is slightly more convienent
+	string cityConnection = citiesToVisit[selectedIndex];
+	if(breadthFirstSearch(cityConnection, city)){
+		processPath(cityConnection, city, true);
+		cout << city << "->";
+		printPath();
+	}else {
+		printf("A path does not exist between the two cities you selected");
+	}
+}
+
 void FlightPathGraph::routeSearch4(string city1, string city2,string city3){
 	//Set a maximum distance
 	int dist = INT_MAX;

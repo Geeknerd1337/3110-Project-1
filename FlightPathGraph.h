@@ -40,6 +40,8 @@ public:
 
 	void routeSearch2(string start, string visit1, string visit2, string end);
 
+	void routeSearch3(string city);
+
 	void routeSearch4(string city1, string city2,string city3);
 
 	void printParents();
