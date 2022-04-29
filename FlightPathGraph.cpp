@@ -13,6 +13,7 @@ namespace std
 	}
 };
 
+//Read in the "flight.txt" file and turn it into a graph by adding nodes and connections to the edges map
 void FlightPathGraph::readFile() {
 	flightPathFile.open("flight.txt");
 	string node, connection;
@@ -76,16 +77,12 @@ void FlightPathGraph::printPath() {
 	cout << endl;
 }
 
+
+//displays the parents map
 void FlightPathGraph::printParents() {
 
 	//Iterate over the parents and print them
-	/*for (auto iter = parents.begin(); iter != parents.end(); ++iter) {
-		cout << "[" << iter->first << "]" << "->[" << iter->second << "]" << endl;
-		//Get a reference to the vector
-
-	}
-	cout << endl;*/
-
+	
 	//string, vector version
 	for (auto iter = parents.begin(); iter != parents.end(); ++iter) {
 		cout << "[" << iter->first << "]" << endl;
@@ -98,7 +95,7 @@ void FlightPathGraph::printParents() {
 		}
 	}
 
-	
+
 }
 
 //This processes a path by iterating upwards through the parents of nodes
@@ -130,11 +127,11 @@ void FlightPathGraph::processPath(string start, string end, bool addEndToPath) {
 		else {
 			path.push_back(parents[child][parents[child].size()]);
 			//cout << parents[child][parents[child].size()-1] << endl;
-			child = parents[child][parents[child].size()-1];
+			child = parents[child][parents[child].size() - 1];
 		}
 
 		//if we encounter a city we've been to, gtfo and start again with a higher index
-		if(contains(visitedInProcess, child))
+		if (contains(visitedInProcess, child))
 		{
 			i++;
 			child = end;
@@ -152,6 +149,7 @@ void FlightPathGraph::processPath(string start, string end, bool addEndToPath) {
 
 
 //Question 1 from the project
+//simple BFS and then use process path, then see if path size is desired length
 void FlightPathGraph::routeSearch1(string start, string end, int num) {
 	//Use BFS to find the shortest path between the start and the end
 	if (breadthFirstSearch(start, end) == true) {
@@ -168,43 +166,47 @@ void FlightPathGraph::routeSearch1(string start, string end, int num) {
 		}
 	}
 	else {
-		printf("A path does not exist between the two cities you selected");
+		printf("A path does not exist between the two cities you selected\n\n");
 	}
 }
 
-
-void FlightPathGraph::routeSearch3(string city){
+//Question 3 of project
+//Use BFS and process path on all of city's adjacent cities
+void FlightPathGraph::routeSearch3(string city) {
 
 	vector<string> citiesToVisit = edges[city];
 	int maxDistance = INT_MAX;
 	int selectedIndex = -1;
 
-	for(int i = 0; i < citiesToVisit.size(); i++){
+	for (int i = 0; i < citiesToVisit.size(); i++) {
 		string cityConnection = citiesToVisit[i];
-		if(breadthFirstSearch(cityConnection, city)){
+		if (breadthFirstSearch(cityConnection, city)) {
 			processPath(cityConnection, city, true);
-			
-			if(path.size() < maxDistance){
+
+			if (path.size() < maxDistance) {
 				maxDistance = path.size();
 				selectedIndex = i;
 			}
-		}	
+		}
 	}
 
 	//Then literally just run this again one last time to get the correct original path
 	//TODO: Probably just faster to cache the best path as a vector instead of doing another search but 
 	//this is slightly more convienent
 	string cityConnection = citiesToVisit[selectedIndex];
-	if(breadthFirstSearch(cityConnection, city)){
+	if (breadthFirstSearch(cityConnection, city)) {
 		processPath(cityConnection, city, true);
-		cout << city << "->";
+		cout << city << " -> ";
 		printPath();
-	}else {
-		printf("A path does not exist between the two cities you selected");
+	}
+	else {
+		printf("A path does not exist between the two cities you selected\n\n");
 	}
 }
 
-void FlightPathGraph::routeSearch4(string city1, string city2,string city3){
+//Question 4 of the project
+//use BFS to on every city to see which has the best paths to the desired cities
+void FlightPathGraph::routeSearch4(string city1, string city2, string city3) {
 	//Set a maximum distance
 	int dist = INT_MAX;
 	string finalDest = "";
@@ -217,62 +219,68 @@ void FlightPathGraph::routeSearch4(string city1, string city2,string city3){
 
 		string city = iter->first;
 		//If the current city we're looking at
-		if(city.compare(city1) == 0 || city.compare(city2) == 0 || city.compare(city3) == 0){
+		if (city.compare(city1) == 0 || city.compare(city2) == 0 || city.compare(city3) == 0) {
 			continue;
 		}
 
 		//See if we get a path to city 1
-		if(breadthFirstSearch(city,city1)){
-			processPath(city,city1, true);
+		if (breadthFirstSearch(city, city1)) {
+			processPath(city, city1, true);
 			curDistance += path.size();
-		}else{
+		}
+		else {
 			//if we don't find a path, just stop looking
 			continue;
 		}
 
 		//See if we can get a path to city 2
-		if(breadthFirstSearch(city, city2)){
-			processPath(city,city2, true);
+		if (breadthFirstSearch(city, city2)) {
+			processPath(city, city2, true);
 			curDistance += path.size();
-		}else{
+		}
+		else {
 			continue;
 		}
 
 		//See if we can get a path to city 3
-		if(breadthFirstSearch(city, city3)){
-			processPath(city,city3, true);
+		if (breadthFirstSearch(city, city3)) {
+			processPath(city, city3, true);
 			curDistance += path.size();
-		}else{
+		}
+		else {
 			continue;
 		}
 
 		//If we made it this far, there is a path to all 3 cities, so now we check to see if this distance is the smallest
-		if(curDistance < dist){
+		if (curDistance < dist) {
 			dist = curDistance;
 			finalDest = city;
 		}
 	}
 
 	//Finally, if our finalDest isn't equal to "", then we can print the paths, otherwise, there is no path.
-	if(finalDest.compare("") != 0){
+	if (finalDest.compare("") != 0) {
 		printf("Here are your paths for a minimum distance between these cities:\n");
 		breadthFirstSearch(city1, finalDest);
-		processPath(city1,finalDest, true);
+		processPath(city1, finalDest, true);
 		printPath();
 
 		breadthFirstSearch(city2, finalDest);
-		processPath(city2,finalDest, true);
+		processPath(city2, finalDest, true);
 		printPath();
 
 		breadthFirstSearch(city3, finalDest);
-		processPath(city3,finalDest, true);
+		processPath(city3, finalDest, true);
 		printPath();
 
-	}else{
-		printf("There exists no path between these 3 cities.\n");
+	}
+	else {
+		printf("There exists no path between these 3 cities.\n\n");
 	}
 }
 
+//Question 2 of the project
+//use BFS to figure out if A -> B -> C -> D or A -> C -> B -> D is a better path
 void FlightPathGraph::routeSearch2(string start, string visit1, string visit2, string end) {
 	int distance1 = 0;
 	int distance2 = 0;
@@ -338,17 +346,14 @@ void FlightPathGraph::routeSearch2(string start, string visit1, string visit2, s
 	}
 
 
-	cout << "dist1: " << distance1 << "dist2: " << distance2 << endl;
 
 	if (distance1 > distance2) {
 		path = path2;
 		printPath();
-		cout << "path 2" << endl;
 	}
 	else if (distance2 > distance1) {
 		path = path1;
 		printPath();
-		cout << "path 1";
 	}
 	else if (distance1 == distance2 && distance1 != -1 && distance2 != -1) {
 		printf("The distances between the following paths are equal:\n");
@@ -359,7 +364,7 @@ void FlightPathGraph::routeSearch2(string start, string visit1, string visit2, s
 	}
 
 	if (distance1 == -1 && distance2 == -1) {
-		printf("There is no path which takes you to the two desired cities");
+		printf("There is no path which takes you to the two desired cities\n\n");
 	}
 
 }
@@ -397,9 +402,9 @@ bool FlightPathGraph::breadthFirstSearch(string start, string end) {
 
 				//What this is basically doing is giving an entry in the map where you will give a given destination node and be able to trace back to its parent
 				//parents[child] = node;
-				 if (!contains(parents[child], node)) {
-				 	parents[child].push_back(node);
-				 }
+				if (!contains(parents[child], node)) {
+					parents[child].push_back(node);
+				}
 
 				//Now we check to see if we've reached our destination, and if so, return true
 				if (child.compare(end) == 0) {
