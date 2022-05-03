@@ -11,6 +11,6 @@ Type "make" to compile the three files with the makefile.
 Then type "./project" to run the project.
 
 Project will have you select a menu option by typing a number.
-The type city names in the form "City, Country".
+Then type city names in the form "City, Country".
 The number of cities will depend on selected menu option.
 
